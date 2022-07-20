@@ -47,7 +47,7 @@ void remove_solitary_row(Work<IndexType, FloatType> &work,
   }
   auto &boundaries = initial_integer_bounds[A.column_index[non_zero_iter]];
   const FloatType new_bound = b[row_idx] / A.values[non_zero_iter];
-  if (A.values[non_zero_iter] > 0) {
+  if (A.values[non_zero_iter] < 0) {
     boundaries.lower_bound =
         std::max(boundaries.lower_bound, std::floor(new_bound + settings.eps));
   } else {

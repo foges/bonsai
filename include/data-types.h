@@ -63,7 +63,7 @@ template <typename FloatType> struct Solution {
 
 struct Settings {
   /** Maximum number of branch-and-bound iterations. */
-  int max_iter = 1000;
+  int max_iter = 100;
 
   /** Tolerance for classifying a value as integer. */
   double eps = 1e-5;

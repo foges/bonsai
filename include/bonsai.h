@@ -11,6 +11,15 @@
 
 namespace bonsai {
 
+template <typename T>
+void printvec(const std::vector<T> &vec, const std::string &name) {
+  std::cout << name << " (" << vec.size() << " elements)" << std::endl;
+  for (const auto &el : vec) {
+    std::cout << el << " ";
+  }
+  std::cout << std::endl;
+}
+
 template <typename SolverType, typename IndexType, typename FloatType>
 Solution<FloatType>
 solve(const SolverType &solver,
@@ -36,6 +45,7 @@ solve(const SolverType &solver,
         impl::create_relaxation(work.problem_data, work.integer_indices,
                                 branch.integer_bounds, settings);
     auto relaxed_solution = solver.solve(relaxed_problem);
+
     if (relaxed_solution.status == kUnbounded) {
       return relaxed_solution;
     }
@@ -55,8 +65,9 @@ solve(const SolverType &solver,
       const auto rounded_problem =
           impl::create_relaxation(work.problem_data, work.integer_indices,
                                   rounded_integer_bounds, settings);
+
       const auto rounded_solution = solver.solve(rounded_problem);
-      if (rounded_solution.status != kInfeasible &&
+      if (rounded_solution.status == kSolved &&
           rounded_solution.primal_objective <
               work.best_solution.primal_objective) {
         work.best_solution = rounded_solution;

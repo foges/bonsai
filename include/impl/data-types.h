@@ -51,18 +51,9 @@ template <typename IndexType, typename FloatType> struct CscMatrix {
 template <typename FloatType>
 void printvec(const std::vector<impl::Bound<FloatType>> &vec,
               const std::string &name) {
-  std::cout << name << "(" << vec.size() << " elements)" << std::endl;
-  for (const auto &el : vec) {
-    std::cout << "(" << el.lower_bound << ", " << el.upper_bound << ") ";
-  }
-  std::cout << std::endl;
-}
-
-template <typename T>
-void printvec(const std::vector<T> &vec, const std::string &name) {
   std::cout << name << " (" << vec.size() << " elements)" << std::endl;
   for (const auto &el : vec) {
-    std::cout << el << " ";
+    std::cout << "(" << el.lower_bound << ", " << el.upper_bound << ") ";
   }
   std::cout << std::endl;
 }

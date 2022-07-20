@@ -77,11 +77,11 @@ merge_cone_bounds(const Matrix<IndexType, FloatType> &zero_cone_A,
     } else {
       if (bound.lower_bound > -settings.int_max) {
         add_constriant_row(positive_cone_A_merged, positive_cone_b_merged,
-                           integer_index, 1.0, bound.upper_bound);
+                           integer_index, -1.0, -bound.lower_bound);
       }
       if (bound.upper_bound < settings.int_max) {
         add_constriant_row(positive_cone_A_merged, positive_cone_b_merged,
-                           integer_index, -1.0, -bound.lower_bound);
+                           integer_index, 1.0, bound.upper_bound);
       }
     }
   }
