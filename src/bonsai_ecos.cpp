@@ -70,6 +70,7 @@ struct EcosSolver {
 
     pwork *work = ECOS_setup(n, m, p, l, ncones, qptr, nex, Gpr, Gjc, Gir, Apr,
                              Ajc, Air, cptr, hptr, bptr);
+    work->stgs->verbose = 0;
     int exitcode = ECOS_solve(work);
 
     std::vector<pfloat> x(work->x, work->x + n);
@@ -103,7 +104,7 @@ impl::CscMatrix<idxint, pfloat> ptr_to_csc(const idxint m, const idxint n,
             .row_index = std::vector<idxint>(ir, ir + jc[n]),
             .column_pointer = std::vector<idxint>(jc, jc + n + 1)};
   }
-  return {.m = 0, .n = n, .column_pointer = {0}};
+  return {.m = 0, .n = n, .column_pointer = std::vector<idxint>(n + 1)};
 }
 
 template <typename T>

@@ -14,13 +14,18 @@ INCLUDES=\
 	-I external/ecos/include \
 	-I external/ecos/external/SuiteSparse_config
 
+INCLUDES_TEST=\
+	${INCLUDES} \
+	-I external/libcester/include \
+	-I .
+
 .PHONY: test
 test: ${TEST_BIN}
 	./bin/bonsai_ecos_test
 
 bin/%: test/%.cpp external/ecos/libecos.a lib/libbonsai.a
 	mkdir -p ${dir $@}
-	${CXX} -o $@ $^ ${CFLAGS} ${INCLUDES}
+	${CXX} -o $@ $^ ${CFLAGS} ${INCLUDES_TEST}
 
 build/%.o: src/%.cpp ${HEADER}
 	mkdir -p ${dir $@}
