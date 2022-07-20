@@ -35,12 +35,12 @@ solve(const SolverType &solver,
     const auto relaxed_problem =
         impl::create_relaxation(work.problem_data, work.integer_indices,
                                 branch.integer_bounds, settings);
-    auto relaxed_solution = solver.solve(relaxed_problem);
+    const auto relaxed_solution = solver.solve(relaxed_problem);
 
     if (relaxed_solution.status == kUnbounded) {
       return relaxed_solution;
     }
-    if (relaxed_solution.status == kInfeasible ||
+    if (relaxed_solution.status != kSolved ||
         relaxed_solution.primal_objective >=
             work.best_solution.primal_objective) {
       continue;
