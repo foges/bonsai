@@ -14,12 +14,12 @@ template <typename IndexType, typename FloatType>
 IndexType find_max_diff_iter(const Solution<FloatType> &solution,
                              const std::vector<IndexType> &integer_indices) {
   IndexType max_diff_iter;
-  FloatType max_diff = -1.0;
+  FloatType max_abs_diff = -1.0;
   for (IndexType iter = 0; iter < integer_indices.size(); ++iter) {
     const auto val = solution.x[integer_indices[iter]];
     const auto diff = std::abs(std::round(val) - val);
-    if (diff > max_diff) {
-      max_diff = diff;
+    if (diff > max_abs_diff) {
+      max_abs_diff = diff;
       max_diff_iter = iter;
     }
   }
@@ -43,8 +43,12 @@ branch(Work<IndexType, FloatType> &work,
       std::ceil(solution.x[work.integer_indices[split_iter]]);
 
   FloatType objective = solution.primal_objective;
-  return {Branch<FloatType>{objective, objective, integer_bounds_lower},
-          Branch<FloatType>{objective, objective, integer_bounds_upper}};
+  return {Branch<FloatType>{.priority = objective,
+                            .lower_bound = objective,
+                            .integer_bounds = integer_bounds_lower},
+          Branch<FloatType>{.priority = objective,
+                            .lower_bound = objective,
+                            .integer_bounds = integer_bounds_upper}};
 }
 
 } // namespace impl

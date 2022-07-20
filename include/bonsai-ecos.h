@@ -3,17 +3,6 @@
 
 #include "ecos.h"
 
-#include "data-types.h"
-
-namespace bonsai {
-
-Solution<pfloat>
-ecos_solve(const ProblemData<idxint, pfloat> &problem_data,
-           const IntegralConstraints<idxint> &integral_constraints,
-           const Settings &setting);
-
-} // namespace bonsai
-
 #ifdef __cplusplus
 extern "C" {
 #endif

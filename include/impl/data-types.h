@@ -1,6 +1,7 @@
 #ifndef BONSAI__IMPL__DATA_TYPES_H_
 #define BONSAI__IMPL__DATA_TYPES_H_
 
+#include <queue>
 #include <vector>
 
 #include "data-types.h"
@@ -17,6 +18,11 @@ template <typename FloatType> struct Branch {
   double priority;
   double lower_bound;
   std::vector<Bound<FloatType>> integer_bounds;
+
+  friend bool operator<(const Branch<FloatType> &lhs,
+                        const Branch<FloatType> &rhs) {
+    return lhs.priority < rhs.priority;
+  }
 };
 
 template <typename IndexType, typename FloatType> struct Work {
@@ -41,15 +47,15 @@ template <typename IndexType, typename FloatType> struct CscMatrix {
 
 } // namespace impl
 
-template <typename FloatType>
-void printvec(const std::vector<impl::Bound<FloatType>> &vec,
-              const std::string &name) {
-  std::cout << name << "(" << vec.size() << " elements)" << std::endl;
-  for (const auto &el : vec) {
-    std::cout << "(" << el.lower_bound << ", " << el.upper_bound << ") ";
-  }
-  std::cout << std::endl;
-}
+// template <typename FloatType>
+// void printvec(const std::vector<impl::Bound<FloatType>> &vec,
+//               const std::string &name) {
+//   std::cout << name << "(" << vec.size() << " elements)" << std::endl;
+//   for (const auto &el : vec) {
+//     std::cout << "(" << el.lower_bound << ", " << el.upper_bound << ") ";
+//   }
+//   std::cout << std::endl;
+// }
 
 } // namespace bonsai
 

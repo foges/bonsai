@@ -7,13 +7,13 @@
 namespace bonsai {
 namespace {
 
-template <typename T> void printvec(const T &vec, const std::string &name) {
-  std::cout << name << "(" << vec.size() << " elements)" << std::endl;
-  for (const auto &el : vec) {
-    std::cout << el << " ";
-  }
-  std::cout << std::endl;
-}
+// template <typename T> void printvec(const T &vec, const std::string &name) {
+//   std::cout << name << "(" << vec.size() << " elements)" << std::endl;
+//   for (const auto &el : vec) {
+//     std::cout << el << " ";
+//   }
+//   std::cout << std::endl;
+// }
 
 Status map_status(int ecos_exitcode) {
   switch (ecos_exitcode) {

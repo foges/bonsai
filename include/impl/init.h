@@ -33,7 +33,7 @@ std::vector<bool>
 create_integer_map(const std::vector<IndexType> &integer_indices,
                    const int num_variables) {
   std::vector<bool> is_integer(num_variables);
-  for (const auto &index : integer_indices) {
+  for (const auto index : integer_indices) {
     is_integer[index] = true;
   }
   return is_integer;

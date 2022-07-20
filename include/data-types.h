@@ -1,11 +1,11 @@
 #ifndef BONSAI__DATA_TYPES_H_
 #define BONSAI__DATA_TYPES_H_
 
-#include <iostream>
 #include <vector>
 
 namespace bonsai {
 
+/** Compressed-sparse row matrix format. */
 template <typename IndexType, typename FloatType> struct Matrix {
   /** Number of rows. */
   IndexType m;
@@ -38,7 +38,9 @@ template <typename IndexType, typename FloatType> struct ProblemData {
 };
 
 template <typename IndexType> struct IntegralConstraints {
+  /** Indices of integer variables. */
   std::vector<IndexType> integer_indices;
+  /** Indices of boolean variables. */
   std::vector<IndexType> bool_indices;
 };
 
@@ -52,28 +54,26 @@ template <typename FloatType> struct Solution {
   /** Slack variable. */
   std::vector<FloatType> s;
 
+  /** Primal objective value. */
   FloatType primal_objective;
 
+  /** Solver status on exit. */
   Status status;
 };
 
 struct Settings {
+  /** Maximum number of branch-and-bound iterations. */
   int max_iter = 1000;
+
+  /** Tolerance for classifying a value as integer. */
   double eps = 1e-5;
+
+  /** Value to consider infinite. */
   double int_max = 1'000'000;
 
-  bool verbose = false;
-
+  /** Round integers and re-solve. */
   bool check_rounded_solution = true;
 };
-
-template <typename T> void printvec(const T &vec, const std::string &name) {
-  std::cout << name << "(" << vec.size() << " elements)" << std::endl;
-  for (const auto &el : vec) {
-    std::cout << el << " ";
-  }
-  std::cout << std::endl;
-}
 
 } // namespace bonsai
 

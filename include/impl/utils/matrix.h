@@ -1,77 +1,79 @@
 #ifndef BONSAI__IMPL__UTILS__MATRIX_H_
 #define BONSAI__IMPL__UTILS__MATRIX_H_
 
-#include <iostream>
-
 #include "data-types.h"
 
 namespace bonsai {
 namespace impl {
+namespace internal {
 
 template <typename IndexType, typename FloatType>
-CscMatrix<IndexType, FloatType>
-csr_to_csc_matrix(const Matrix<IndexType, FloatType> &matrix) {
+std::tuple<std::vector<FloatType>, std::vector<IndexType>,
+           std::vector<IndexType>>
+matrix_transpose(const std::vector<FloatType> &values,
+                 const std::vector<IndexType> &index,
+                 const std::vector<IndexType> &pointer,
+                 const IndexType slow_dim, const IndexType fast_dim) {
   std::vector<std::tuple<IndexType, IndexType, FloatType>> coo_matrix;
-  for (IndexType row_idx = 0; row_idx < matrix.m; ++row_idx) {
-    const IndexType start = matrix.row_pointer[row_idx];
-    const IndexType end = matrix.row_pointer[row_idx + 1];
+  for (IndexType slow_idx = 0; slow_idx < slow_dim; ++slow_idx) {
+    const IndexType start = pointer[slow_idx];
+    const IndexType end = pointer[slow_idx + 1];
     for (IndexType iter = start; iter < end; ++iter) {
-      const IndexType col_idx = matrix.column_index[iter];
-      const FloatType val = matrix.values[iter];
-      coo_matrix.push_back({col_idx, row_idx, val});
+      const IndexType fast_idx = index[iter];
+      const FloatType val = values[iter];
+      coo_matrix.push_back({fast_idx, slow_idx, val});
     }
   }
 
   std::sort(coo_matrix.begin(), coo_matrix.end());
 
-  CscMatrix<IndexType, FloatType> csc_matrix{.m = matrix.m, .n = matrix.n};
+  std::vector<FloatType> values_transposed;
+  std::vector<IndexType> index_transposed;
+  std::vector<IndexType> pointer_transposed;
 
   for (IndexType iter = 0; iter < coo_matrix.size(); ++iter) {
     const auto &element = coo_matrix[iter];
-    const IndexType curr_col = std::get<0>(element);
-    while (csc_matrix.column_pointer.size() < curr_col + 1) {
-      csc_matrix.column_pointer.push_back(csc_matrix.values.size());
+    const IndexType curr_idx = std::get<0>(element);
+    while (pointer_transposed.size() < curr_idx + 1) {
+      pointer_transposed.push_back(values_transposed.size());
     }
-    csc_matrix.row_index.push_back(std::get<1>(element));
-    csc_matrix.values.push_back(std::get<2>(element));
+    index_transposed.push_back(std::get<1>(element));
+    values_transposed.push_back(std::get<2>(element));
   }
-  while (csc_matrix.column_pointer.size() < matrix.n + 1) {
-    csc_matrix.column_pointer.push_back(csc_matrix.values.size());
+  while (pointer_transposed.size() < fast_dim + 1) {
+    pointer_transposed.push_back(values_transposed.size());
   }
-  return csc_matrix;
+  return {values_transposed, index_transposed, pointer_transposed};
+}
+
+} // namespace internal
+
+template <typename IndexType, typename FloatType>
+CscMatrix<IndexType, FloatType>
+csr_to_csc_matrix(const Matrix<IndexType, FloatType> &matrix) {
+  const auto [values, row_index, column_pointer] =
+      internal::matrix_transpose(matrix.values, matrix.column_index,
+                                 matrix.row_pointer, matrix.m, matrix.n);
+
+  return CscMatrix<IndexType, FloatType>{.m = matrix.m,
+                                         .n = matrix.n,
+                                         .values = values,
+                                         .row_index = row_index,
+                                         .column_pointer = column_pointer};
 }
 
 template <typename IndexType, typename FloatType>
 Matrix<IndexType, FloatType>
 csc_to_csr_matrix(const CscMatrix<IndexType, FloatType> &matrix) {
-  std::vector<std::tuple<IndexType, IndexType, FloatType>> coo_matrix;
-  for (IndexType col_idx = 0; col_idx < matrix.n; ++col_idx) {
-    const IndexType start = matrix.column_pointer[col_idx];
-    const IndexType end = matrix.column_pointer[col_idx + 1];
-    for (IndexType iter = start; iter < end; ++iter) {
-      const IndexType row_idx = matrix.row_index[iter];
-      const FloatType val = matrix.values[iter];
-      coo_matrix.push_back({row_idx, col_idx, val});
-    }
-  }
+  const auto [values, column_index, row_pointer] =
+      internal::matrix_transpose(matrix.values, matrix.row_index,
+                                 matrix.column_pointer, matrix.n, matrix.m);
 
-  std::sort(coo_matrix.begin(), coo_matrix.end());
-
-  Matrix<IndexType, FloatType> csr_matrix{.m = matrix.m, .n = matrix.n};
-
-  for (IndexType iter = 0; iter < coo_matrix.size(); ++iter) {
-    const auto &element = coo_matrix[iter];
-    const IndexType curr_row = std::get<0>(element);
-    while (csr_matrix.row_pointer.size() < curr_row + 1) {
-      csr_matrix.row_pointer.push_back(csr_matrix.values.size());
-    }
-    csr_matrix.column_index.push_back(std::get<1>(element));
-    csr_matrix.values.push_back(std::get<2>(element));
-  }
-  while (csr_matrix.row_pointer.size() < matrix.m + 1) {
-    csr_matrix.row_pointer.push_back(csr_matrix.values.size());
-  }
-  return csr_matrix;
+  return Matrix<IndexType, FloatType>{.m = matrix.m,
+                                      .n = matrix.n,
+                                      .values = values,
+                                      .column_index = column_index,
+                                      .row_pointer = row_pointer};
 }
 
 template <typename IndexType, typename FloatType>
@@ -100,32 +102,32 @@ vertical_concat(const Matrix<IndexType, FloatType> &matrix_a,
 template <typename IndexType, typename FloatType>
 std::tuple<Matrix<IndexType, FloatType>, Matrix<IndexType, FloatType>>
 matrix_split(const Matrix<IndexType, FloatType> &matrix,
-             const IndexType row_split_size) {
+             const IndexType row_split_location) {
   const auto &values = matrix.values;
   const auto &column_index = matrix.column_index;
   const auto &row_pointer = matrix.row_pointer;
 
   Matrix<IndexType, FloatType> matrix_a{
-      .m = row_split_size,
+      .m = row_split_location,
       .n = matrix.n,
       .values = std::vector<FloatType>(
-          values.data(), values.data() + row_pointer[row_split_size]),
-      .column_index = std::vector<IndexType>(column_index.data(),
-                                             column_index.data() +
-                                                 row_pointer[row_split_size]),
-      .row_pointer = std::vector<IndexType>(
-          row_pointer.data(), row_pointer.data() + row_split_size + 1)};
-  Matrix<IndexType, FloatType> matrix_b{
-      .m = matrix.m - row_split_size,
-      .n = matrix.n,
-      .values =
-          std::vector<FloatType>(values.data() + row_pointer[row_split_size],
-                                 values.data() + values.size()),
+          values.data(), values.data() + row_pointer[row_split_location]),
       .column_index = std::vector<IndexType>(
-          column_index.data() + row_pointer[row_split_size],
+          column_index.data(),
+          column_index.data() + row_pointer[row_split_location]),
+      .row_pointer = std::vector<IndexType>(
+          row_pointer.data(), row_pointer.data() + row_split_location + 1)};
+  Matrix<IndexType, FloatType> matrix_b{
+      .m = matrix.m - row_split_location,
+      .n = matrix.n,
+      .values = std::vector<FloatType>(values.data() +
+                                           row_pointer[row_split_location],
+                                       values.data() + values.size()),
+      .column_index = std::vector<IndexType>(
+          column_index.data() + row_pointer[row_split_location],
           column_index.data() + column_index.size()),
       .row_pointer =
-          std::vector<IndexType>(row_pointer.data() + row_split_size,
+          std::vector<IndexType>(row_pointer.data() + row_split_location,
                                  row_pointer.data() + row_pointer.size())};
   for (auto &row_ptr : matrix_b.row_pointer) {
     row_ptr -= matrix_b.row_pointer[0];

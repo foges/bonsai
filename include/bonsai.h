@@ -1,8 +1,6 @@
 #ifndef BONSAI__BONSAI_H_
 #define BONSAI__BONSAI_H_
 
-#include <queue>
-
 #include "data-types.h"
 #include "impl/branch.h"
 #include "impl/data-types.h"
@@ -23,13 +21,7 @@ solve(const SolverType &solver,
       impl::init(problem_data, integral_constraints, settings);
   impl::presolve(work, settings);
 
-  const auto cmp = [](const impl::Branch<FloatType> &x,
-                      const impl::Branch<FloatType> &y) {
-    return x.priority < y.priority;
-  };
-  std::priority_queue<impl::Branch<FloatType>,
-                      std::vector<impl::Branch<FloatType>>, decltype(cmp)>
-      branch_queue(cmp);
+  std::priority_queue<impl::Branch<FloatType>> branch_queue;
   branch_queue.push(work.initial_branch);
   for (IndexType iter = 0; iter < settings.max_iter && !branch_queue.empty();
        ++iter) {

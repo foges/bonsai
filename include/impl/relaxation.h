@@ -1,8 +1,6 @@
 #ifndef BONSAI__IMPL__RELAXATION_H_
 #define BONSAI__IMPL__RELAXATION_H_
 
-#include <iostream>
-
 #include "data-types.h"
 #include "impl/data-types.h"
 
@@ -70,9 +68,9 @@ merge_cone_bounds(const Matrix<IndexType, FloatType> &zero_cone_A,
   auto [positive_cone_A_merged, positive_cone_b_merged] =
       clean_constriant_zeros(positive_cone_A, positive_cone_b);
 
-  for (int i = 0; i < integer_indices.size(); ++i) {
-    const auto &bound = integer_bounds[i];
-    const auto integer_index = integer_indices[i];
+  for (int iter = 0; iter < integer_indices.size(); ++iter) {
+    const auto &bound = integer_bounds[iter];
+    const auto integer_index = integer_indices[iter];
     if (bound.lower_bound == bound.upper_bound) {
       add_constriant_row(zero_cone_A_merged, zero_cone_b_merged, integer_index,
                          1.0, bound.upper_bound);

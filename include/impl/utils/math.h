@@ -10,7 +10,7 @@ template <typename IndexType, typename FloatType>
 bool is_integer_solution(const Solution<FloatType> &relaxed_solution,
                          const std::vector<IndexType> &integer_indices,
                          const Settings &settings) {
-  for (const IndexType col_idx : integer_indices) {
+  for (const auto col_idx : integer_indices) {
     const auto val = relaxed_solution.x[col_idx];
     FloatType diff = std::abs(std::round(val) - val);
     if (diff > settings.eps) {
@@ -24,7 +24,6 @@ template <typename IndexType, typename FloatType>
 std::vector<Bound<FloatType>>
 round(const Solution<FloatType> &relaxed_solution,
       const std::vector<IndexType> &integer_indices) {
-
   std::vector<Bound<FloatType>> rounded_integer_bounds;
   for (const auto int_idx : integer_indices) {
     const auto rounded_val = std::round(relaxed_solution.x[int_idx]);

@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "bonsai-ecos.h"
 
 bool float_eqls(pfloat x, pfloat y) { return std::abs(x - y) < 1e-5; }
