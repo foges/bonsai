@@ -15,10 +15,6 @@ matrix_transpose(const std::vector<FloatType> &values,
                  const std::vector<IndexType> &index,
                  const std::vector<IndexType> &pointer,
                  const IndexType slow_dim, const IndexType fast_dim) {
-  // printvec(values, "values");
-  // printvec(index, "index");
-  // printvec(pointer, "pointer");
-  // std::cout << slow_dim << " " << fast_dim << std::endl;
   std::vector<std::tuple<IndexType, IndexType, FloatType>> coo_matrix;
   for (IndexType slow_idx = 0; slow_idx < slow_dim; ++slow_idx) {
     const IndexType start = pointer[slow_idx];

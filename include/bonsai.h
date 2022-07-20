@@ -11,15 +11,6 @@
 
 namespace bonsai {
 
-template <typename T>
-void printvec(const std::vector<T> &vec, const std::string &name) {
-  std::cout << name << " (" << vec.size() << " elements)" << std::endl;
-  for (const auto &el : vec) {
-    std::cout << el << " ";
-  }
-  std::cout << std::endl;
-}
-
 template <typename SolverType, typename IndexType, typename FloatType>
 Solution<FloatType>
 solve(const SolverType &solver,

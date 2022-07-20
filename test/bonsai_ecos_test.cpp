@@ -4,15 +4,6 @@
 #include "bonsai-ecos.h"
 #include "unittest.h"
 
-template <typename T>
-void printvec(const std::vector<T> &vec, const std::string &name) {
-  std::cout << name << " (" << vec.size() << " elements)" << std::endl;
-  for (const auto &el : vec) {
-    std::cout << el << " ";
-  }
-  std::cout << std::endl;
-}
-
 void test_basic() {
   idxint n = 2;
   idxint m = 2;

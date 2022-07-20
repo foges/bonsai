@@ -47,17 +47,6 @@ template <typename IndexType, typename FloatType> struct CscMatrix {
 };
 
 } // namespace impl
-
-template <typename FloatType>
-void printvec(const std::vector<impl::Bound<FloatType>> &vec,
-              const std::string &name) {
-  std::cout << name << " (" << vec.size() << " elements)" << std::endl;
-  for (const auto &el : vec) {
-    std::cout << "(" << el.lower_bound << ", " << el.upper_bound << ") ";
-  }
-  std::cout << std::endl;
-}
-
 } // namespace bonsai
 
 #endif // BONSAI__IMPL__DATA_TYPES_H_
