@@ -32,16 +32,16 @@ matrix_transpose(const std::vector<FloatType> &values,
   std::vector<IndexType> index_transposed;
   std::vector<IndexType> pointer_transposed;
 
-  for (IndexType iter = 0; iter < coo_matrix.size(); ++iter) {
+  for (IndexType iter = 0; iter < std::ssize(coo_matrix); ++iter) {
     const auto &element = coo_matrix[iter];
     const IndexType curr_idx = std::get<0>(element);
-    while (pointer_transposed.size() < curr_idx + 1) {
+    while (std::ssize(pointer_transposed) < curr_idx + 1) {
       pointer_transposed.push_back(values_transposed.size());
     }
     index_transposed.push_back(std::get<1>(element));
     values_transposed.push_back(std::get<2>(element));
   }
-  while (pointer_transposed.size() < fast_dim + 1) {
+  while (std::ssize(pointer_transposed) < fast_dim + 1) {
     pointer_transposed.push_back(values_transposed.size());
   }
   return {values_transposed, index_transposed, pointer_transposed};
@@ -93,7 +93,7 @@ vertical_concat(const Matrix<IndexType, FloatType> &matrix_a,
                                matrix_b.column_index.end());
 
   const auto row_pointer_start = matrix_c.row_pointer.back();
-  for (IndexType iter = 1; iter < matrix_b.row_pointer.size(); ++iter) {
+  for (IndexType iter = 1; iter < std::ssize(matrix_b.row_pointer); ++iter) {
     matrix_c.row_pointer.push_back(row_pointer_start +
                                    matrix_b.row_pointer[iter]);
   }

@@ -1,5 +1,5 @@
 CXX=g++
-CFLAGS=-Wall -std=c++17 -g -fPIC -lm -DLDL_LONG -DDLONG
+CFLAGS=-Wall -Wextra -std=c++20 -g -DLDL_LONG -DDLONG
 
 HEADER=${wildcard include/*.h include/impl/*.h include/impl/utils/*.h}
 
@@ -16,8 +16,7 @@ INCLUDES=\
 
 INCLUDES_TEST=\
 	${INCLUDES} \
-	-I external/libcester/include \
-	-I .
+	-I external/libcester/include
 
 .PHONY: test
 test: ${TEST_BIN}

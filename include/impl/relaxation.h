@@ -68,7 +68,7 @@ merge_cone_bounds(const Matrix<IndexType, FloatType> &zero_cone_A,
   auto [positive_cone_A_merged, positive_cone_b_merged] =
       clean_constriant_zeros(positive_cone_A, positive_cone_b);
 
-  for (int iter = 0; iter < integer_indices.size(); ++iter) {
+  for (int iter = 0; iter < std::ssize(integer_indices); ++iter) {
     const auto &bound = integer_bounds[iter];
     const auto integer_index = integer_indices[iter];
     if (bound.lower_bound == bound.upper_bound) {

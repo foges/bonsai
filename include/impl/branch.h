@@ -15,7 +15,7 @@ IndexType find_max_diff_iter(const Solution<FloatType> &solution,
                              const std::vector<IndexType> &integer_indices) {
   IndexType max_diff_iter;
   FloatType max_abs_diff = -1.0;
-  for (IndexType iter = 0; iter < integer_indices.size(); ++iter) {
+  for (IndexType iter = 0; iter < std::ssize(integer_indices); ++iter) {
     const auto val = solution.x[integer_indices[iter]];
     const auto diff = std::abs(std::round(val) - val);
     if (diff > max_abs_diff) {
